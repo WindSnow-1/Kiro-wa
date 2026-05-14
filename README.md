@@ -2,34 +2,41 @@
 
 Kiro IDE reverse proxy with Anthropic-compatible endpoints and a built-in admin console.
 
-## Setup
+## Quick Start
 
-1. Install dependencies:
+The fastest server deployment is:
 
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/WindSnow-1/Kiro-wa.git kiro-node
+cd kiro-node
+docker compose up -d --build
+```
 
-2. Create local config files from the examples:
+Then open:
 
-   ```bash
-   cp config/config.example.json config/config.json
-   cp config/credentials.example.json config/credentials.json
-   ```
+```text
+http://YOUR_SERVER_IP:8990/admin
+```
 
-3. Edit the local files with your own API keys and Kiro credentials.
+Default keys:
 
-4. Start the server:
+- Admin console key: `sk-admin`
+- Proxy API key: `sk-kiro-node`
 
-   ```bash
-   npm start
-   ```
+Add Kiro credentials from the admin console.
 
-5. Open the admin console:
+For public servers, change the keys with environment variables:
 
-   ```text
-   http://127.0.0.1:8990/admin
-   ```
+```bash
+API_KEY=your-api-key ADMIN_API_KEY=your-admin-key docker compose up -d --build
+```
+
+## Local Setup
+
+```bash
+npm install
+npm start
+```
 
 ## Endpoints
 

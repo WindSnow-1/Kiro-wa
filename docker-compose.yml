@@ -4,6 +4,9 @@ services:
     container_name: kiro-node
     ports:
       - "8990:8990"
+    environment:
+      API_KEY: ${API_KEY:-sk-kiro-node}
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-sk-admin}
     volumes:
       - ./config/:/app/config/
     restart: unless-stopped
