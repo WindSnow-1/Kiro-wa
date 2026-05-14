@@ -1,0 +1,9 @@
+services:
+  kiro-node:
+    build: .
+    container_name: kiro-node
+    ports:
+      - "8990:8990"
+    volumes:
+      - ./config/:/app/config/
+    restart: unless-stopped

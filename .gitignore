@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log*
+*.log
+.env
+.env.*
+
+# Local runtime credentials and keys.
+config/*.json
+!config/*.example.json
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

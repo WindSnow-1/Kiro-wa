@@ -1,0 +1,14 @@
+{
+  "name": "kiro-node",
+  "version": "1.0.0",
+  "description": "Kiro IDE reverse proxy with Anthropic API compatibility",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "crc": "^4.3.2"
+  }
+}

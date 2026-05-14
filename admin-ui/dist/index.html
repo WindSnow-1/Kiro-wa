@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kiro Node 管理后台</title>
+    <link rel="stylesheet" href="/admin/assets/app.css?v=cred-add-1" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12.5 11.5 4H19l-6.5 8.5L19 21h-7.5L5 12.5Z"/></svg>
+          </div>
+          <div>
+            <div class="brand-name">Kiro Node</div>
+            <div class="brand-meta">管理后台</div>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <a href="#overview" class="nav-item active">
+            <svg viewBox="0 0 24 24"><path d="M4 13h7V4H4v9Zm0 7h7v-5H4v5Zm9 0h7v-9h-7v9Zm0-11h7V4h-7v5Z"/></svg>
+            <span>概览</span>
+          </a>
+          <a href="#credentials" class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7Zm3-.5a.5.5 0 0 0-.5.5v2h13V7a.5.5 0 0 0-.5-.5H6Zm-.5 5V17a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5v-5.5h-13Z"/></svg>
+            <span>凭证</span>
+          </a>
+          <a href="#models" class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M12 3 3.5 7.5 12 12l8.5-4.5L12 3Zm-8.5 8L12 15.5 20.5 11v5.5L12 21l-8.5-4.5V11Z"/></svg>
+            <span>模型</span>
+          </a>
+          <a href="#daily" class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M7 2h2v3h6V2h2v3h3v17H4V5h3V2Zm11 8H6v10h12V10ZM6 8h12V7H6v1Z"/></svg>
+            <span>每日</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-status">
+          <span class="pulse"></span>
+          <div>
+            <div class="status-label">服务</div>
+            <div class="status-value" id="serviceState">等待中</div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">运行控制</p>
+            <h1>Kiro 代理运行面板</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="refreshButton" title="刷新">
+              <svg viewBox="0 0 24 24"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2.5a5.5 5.5 0 1 1-1.6-3.9L13 11h8V3l-3.3 3.3Z"/></svg>
+            </button>
+            <button class="command-button" id="lockButton">
+              <svg viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h2v11H5V10h2Zm2 0h6V8a3 3 0 0 0-6 0v2Z"/></svg>
+              <span>锁定</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="hero-band" id="overview">
+          <div class="hero-copy">
+            <p class="eyebrow">实时状态</p>
+            <h2 id="heroTitle">输入管理密钥</h2>
+            <p id="heroSubtext">认证后显示凭证、模型用量和配额状态。</p>
+          </div>
+          <div class="health-card">
+            <div class="ring" id="healthRing"><span id="healthScore">--</span></div>
+            <div>
+              <div class="health-title">凭证健康度</div>
+              <div class="health-detail" id="healthDetail">尚未加载数据</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="metrics-grid" aria-label="指标">
+          <article class="metric">
+            <div class="metric-icon blue"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4Zm3 3v10h10V7H7Zm2 2h6v2H9V9Zm0 4h6v2H9v-2Z"/></svg></div>
+            <div>
+              <div class="metric-value" id="totalRequests">--</div>
+              <div class="metric-label">请求数</div>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-icon green"><svg viewBox="0 0 24 24"><path d="M5 4h14v3H5V4Zm0 5h10v3H5V9Zm0 5h14v3H5v-3Zm0 5h7v1H5v-1Z"/></svg></div>
+            <div>
+              <div class="metric-value" id="inputTokens">--</div>
+              <div class="metric-label">输入 Token</div>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-icon amber"><svg viewBox="0 0 24 24"><path d="M4 17h4V7H4v10Zm6 0h4V3h-4v14Zm6 0h4v-7h-4v7ZM3 19h18v2H3v-2Z"/></svg></div>
+            <div>
+              <div class="metric-value" id="outputTokens">--</div>
+              <div class="metric-label">输出 Token</div>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-icon violet"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 11h5v-2h-4V6h-2v7Z"/></svg></div>
+            <div>
+              <div class="metric-value" id="uptime">--</div>
+              <div class="metric-label">运行时长</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="url-panel" id="urls" aria-label="连接地址">
+          <div class="url-header">
+            <div>
+              <p class="eyebrow">连接地址</p>
+              <h3>调用 URL</h3>
+            </div>
+            <span class="url-hint">浏览器打开管理入口，客户端使用接口地址</span>
+          </div>
+          <div class="url-grid">
+            <div class="url-row">
+              <span class="url-label">管理入口</span>
+              <code id="adminUrl">--</code>
+              <button class="icon-button copy-url" data-copy-target="adminUrl" title="复制管理入口">
+                <svg viewBox="0 0 24 24"><path d="M8 7V4h13v13h-3v3H3V7h5Zm2 0h8v8h1V6h-9v1Zm-5 2v9h11V9H5Z"/></svg>
+              </button>
+            </div>
+            <div class="url-row">
+              <span class="url-label">API 基础</span>
+              <code id="baseUrl">--</code>
+              <button class="icon-button copy-url" data-copy-target="baseUrl" title="复制 API 基础地址">
+                <svg viewBox="0 0 24 24"><path d="M8 7V4h13v13h-3v3H3V7h5Zm2 0h8v8h1V6h-9v1Zm-5 2v9h11V9H5Z"/></svg>
+              </button>
+            </div>
+            <div class="url-row">
+              <span class="url-label">消息接口</span>
+              <code id="messagesUrl">--</code>
+              <button class="icon-button copy-url" data-copy-target="messagesUrl" title="复制消息接口">
+                <svg viewBox="0 0 24 24"><path d="M8 7V4h13v13h-3v3H3V7h5Zm2 0h8v8h1V6h-9v1Zm-5 2v9h11V9H5Z"/></svg>
+              </button>
+            </div>
+            <div class="url-row">
+              <span class="url-label">CC 接口</span>
+              <code id="claudeCodeUrl">--</code>
+              <button class="icon-button copy-url" data-copy-target="claudeCodeUrl" title="复制 CC 接口">
+                <svg viewBox="0 0 24 24"><path d="M8 7V4h13v13h-3v3H3V7h5Zm2 0h8v8h1V6h-9v1Zm-5 2v9h11V9H5Z"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel wide" id="credentials">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">身份池</p>
+                <h3>凭证</h3>
+              </div>
+              <div class="panel-actions">
+                <button class="command-button" id="addCredentialButton">
+                  <svg viewBox="0 0 24 24"><path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4Z"/></svg>
+                  <span>添加凭证</span>
+                </button>
+                <div class="segmented">
+                  <button class="segment active" data-filter="all">全部</button>
+                  <button class="segment" data-filter="active">可用</button>
+                  <button class="segment" data-filter="disabled">停用</button>
+                </div>
+              </div>
+            </div>
+            <div class="credential-list" id="credentialList"></div>
+          </article>
+
+          <article class="panel" id="daily">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">日期</p>
+                <h3>每日流量</h3>
+              </div>
+            </div>
+            <div class="daily-chart" id="dailyChart"></div>
+          </article>
+
+          <article class="panel wide" id="models">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">路由</p>
+                <h3>模型用量</h3>
+              </div>
+              <input class="search" id="modelSearch" placeholder="搜索模型" />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>模型</th>
+                    <th>请求</th>
+                    <th>输入</th>
+                    <th>输出</th>
+                    <th>占比</th>
+                  </tr>
+                </thead>
+                <tbody id="modelTable"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">事件</p>
+                <h3>配额告警</h3>
+              </div>
+            </div>
+            <div class="quota-list" id="quotaList"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-overlay hidden" id="credentialModal">
+      <form class="modal-card" id="credentialForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">凭证管理</p>
+            <h2>添加凭证</h2>
+          </div>
+          <button type="button" class="icon-button" id="closeCredentialModal" title="关闭">
+            <svg viewBox="0 0 24 24"><path d="m6.4 5 5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4 6.4 5Z"/></svg>
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-field">
+            <span>认证方式</span>
+            <select id="credentialAuthMethod">
+              <option value="social">Social Refresh Token</option>
+              <option value="idc">IdC / Builder ID / IAM</option>
+              <option value="api_key">Kiro API Key</option>
+            </select>
+          </label>
+
+          <label class="form-field full" id="refreshTokenField">
+            <span>Refresh Token</span>
+            <textarea id="credentialRefreshToken" rows="3" autocomplete="off"></textarea>
+          </label>
+
+          <label class="form-field full hidden" id="apiKeyField">
+            <span>Kiro API Key</span>
+            <input id="credentialApiKey" type="password" autocomplete="off" />
+          </label>
+
+          <div class="form-grid full hidden" id="idcFields">
+            <label class="form-field">
+              <span>Client ID</span>
+              <input id="credentialClientId" autocomplete="off" />
+            </label>
+            <label class="form-field">
+              <span>Client Secret</span>
+              <input id="credentialClientSecret" type="password" autocomplete="off" />
+            </label>
+          </div>
+
+          <label class="form-field">
+            <span>Auth Region</span>
+            <input id="credentialAuthRegion" placeholder="us-east-1" autocomplete="off" />
+          </label>
+          <label class="form-field">
+            <span>API Region</span>
+            <input id="credentialApiRegion" placeholder="us-east-1" autocomplete="off" />
+          </label>
+          <label class="form-field">
+            <span>优先级</span>
+            <input id="credentialPriority" type="number" min="0" value="0" />
+          </label>
+          <label class="form-field">
+            <span>Machine ID</span>
+            <input id="credentialMachineId" autocomplete="off" />
+          </label>
+
+          <details class="advanced-fields full">
+            <summary>高级选项</summary>
+            <div class="form-grid">
+              <label class="form-field full">
+                <span>Endpoint</span>
+                <input id="credentialEndpoint" autocomplete="off" />
+              </label>
+              <label class="form-field full">
+                <span>代理地址</span>
+                <input id="credentialProxyUrl" placeholder="http://127.0.0.1:7890" autocomplete="off" />
+              </label>
+              <label class="form-field">
+                <span>代理用户名</span>
+                <input id="credentialProxyUsername" autocomplete="off" />
+              </label>
+              <label class="form-field">
+                <span>代理密码</span>
+                <input id="credentialProxyPassword" type="password" autocomplete="off" />
+              </label>
+            </div>
+          </details>
+        </div>
+
+        <p class="form-error" id="credentialError"></p>
+        <div class="modal-actions">
+          <button type="button" class="command-button" id="cancelCredentialButton">取消</button>
+          <button type="submit" class="primary-button" id="submitCredentialButton">添加</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="auth-overlay" id="authOverlay">
+      <form class="auth-card" id="authForm">
+        <div class="brand-mark large" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12.5 11.5 4H19l-6.5 8.5L19 21h-7.5L5 12.5Z"/></svg>
+        </div>
+        <h2>管理访问</h2>
+        <label for="adminKey">管理 API 密钥</label>
+        <div class="password-row">
+          <input id="adminKey" type="password" autocomplete="current-password" />
+          <button type="button" class="icon-button" id="showKey" title="显示密钥">
+            <svg viewBox="0 0 24 24"><path d="M12 5c5 0 9 5 10 7-1 2-5 7-10 7S3 14 2 12c1-2 5-7 10-7Zm0 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
+          </button>
+        </div>
+        <button class="primary-button" type="submit">进入控制台</button>
+        <p class="auth-error" id="authError"></p>
+      </form>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="/admin/assets/app.js?v=cred-add-1"></script>
+  </body>
+</html>

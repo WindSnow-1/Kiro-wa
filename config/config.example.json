@@ -1,0 +1,11 @@
+{
+  "host": "0.0.0.0",
+  "port": 8990,
+  "apiKey": "replace-with-your-proxy-api-key",
+  "adminApiKey": "replace-with-your-admin-api-key",
+  "region": "us-east-1",
+  "kiroVersion": "0.9.2",
+  "systemVersion": "win32#10.0.22631",
+  "nodeVersion": "22.22.0",
+  "modelMappings": []
+}
