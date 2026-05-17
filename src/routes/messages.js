@@ -22,7 +22,8 @@ router.post('/messages', async (req, res) => {
     const { conversationState, thinking } = convertRequest(payload);
     const thinkingEnabled = !!(payload.thinking || thinking);
 
-    const { res: kiroRes, credIndex } = await callApi(conversationState);
+    const kiroRes = await callApi(conversationState);
+    const credIndex = kiroRes._credIndex || 0;
 
     if (payload.stream === false) {
       return handleNonStream(kiroRes, payload, thinkingEnabled, credIndex, res);

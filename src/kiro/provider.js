@@ -77,7 +77,8 @@ async function callApi(body) {
             const retryRes = await h2.requestStream(url, { method: 'POST', headers: retryHeaders, body: bodyStr });
             if (retryRes.ok) {
               state.failureCount = 0;
-              return { res: retryRes, credIndex: state.index };
+              retryRes._credIndex = state.index;
+              return retryRes;
             }
             const retryText = typeof retryRes.text === 'function' ? await retryRes.text() : (retryRes.body || '');
             console.log(`[provider] 凭据 ${state.index} 重试仍失败: ${retryRes.status} ${retryText.slice(0, 200)}`);
@@ -91,7 +92,8 @@ async function callApi(body) {
       }
 
       state.failureCount = 0;
-      return { res, credIndex: state.index };
+      res._credIndex = state.index;
+      return res;
     } catch (e) {
       lastError = e;
       state.failureCount++;
