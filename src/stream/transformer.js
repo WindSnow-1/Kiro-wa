@@ -190,6 +190,12 @@ class StreamTransformer {
 
   finalize() {
     const events = [];
+    if (!this.messageStarted) {
+      this.messageStarted = true;
+      events.push(this.generateMessageStart());
+      this.textBlockIndex = this.nextBlockIndex++;
+      events.push({ event: 'content_block_start', data: { type: 'content_block_start', index: this.textBlockIndex, content_block: { type: 'text', text: '' } } });
+    }
     if (this.textBlockIndex !== null) {
       events.push({ event: 'content_block_stop', data: { type: 'content_block_stop', index: this.textBlockIndex } });
     }
