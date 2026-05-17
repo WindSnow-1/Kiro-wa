@@ -36,6 +36,10 @@ router.post('/messages', async (req, res) => {
 
     const transformer = new StreamTransformer(payload.model, thinkingEnabled);
 
+    // 像 Rust 版一样：开流前先发 message_start
+    res.write(formatSse(transformer.generateMessageStart()));
+    transformer.messageStarted = true;
+
     const nodeStream = kiroRes.stream || kiroRes.body;
 
     for await (const chunk of nodeStream) {
@@ -57,6 +61,15 @@ router.post('/messages', async (req, res) => {
     if (!res.headersSent) {
       res.status(500).json({ type: 'error', error: { type: 'api_error', message: e.message } });
     } else {
+      try {
+        if (!res.writableEnded) {
+          res.write(formatSse({ event: 'content_block_start', data: { type: 'content_block_start', index: 0, content_block: { type: 'text', text: '' } } }));
+          res.write(formatSse({ event: 'content_block_delta', data: { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: `[proxy error] ${e.message}` } } }));
+          res.write(formatSse({ event: 'content_block_stop', data: { type: 'content_block_stop', index: 0 } }));
+          res.write(formatSse({ event: 'message_delta', data: { type: 'message_delta', delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { input_tokens: 0, output_tokens: 0 } } }));
+          res.write(formatSse({ event: 'message_stop', data: { type: 'message_stop' } }));
+        }
+      } catch (_) {}
       res.end();
     }
   }
