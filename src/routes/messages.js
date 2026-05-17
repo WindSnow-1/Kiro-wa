@@ -36,9 +36,13 @@ router.post('/messages', async (req, res) => {
 
     const transformer = new StreamTransformer(payload.model, thinkingEnabled);
 
-    // 像 Rust 版一样：开流前先发 message_start
+    // 像 Rust 版一样：开流前先发 message_start + 初始文本块
     res.write(formatSse(transformer.generateMessageStart()));
     transformer.messageStarted = true;
+    if (!thinkingEnabled) {
+      transformer.textBlockIndex = transformer.nextBlockIndex++;
+      res.write(formatSse({ event: 'content_block_start', data: { type: 'content_block_start', index: transformer.textBlockIndex, content_block: { type: 'text', text: '' } } }));
+    }
 
     const nodeStream = kiroRes.stream || kiroRes.body;
 
